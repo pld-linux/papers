@@ -7,12 +7,12 @@
 Summary:	Document viewer for multiple document formats
 Summary(pl.UTF-8):	Przeglądarka dokumentów w wielu formatach
 Name:		papers
-Version:	46.1
+Version:	46.2
 Release:	1
 License:	GPL v2+
 Group:		X11/Applications/Graphics
 Source0:	https://download.gnome.org/sources/papers/46/%{name}-%{version}.tar.xz
-# Source0-md5:	22de6e656f288dd4e30ca8977379b6e9
+# Source0-md5:	101766ca55f1017d591bd273be7bc392
 URL:		https://gitlab.gnome.org/GNOME/papers
 BuildRequires:	appstream-glib
 BuildRequires:	cairo-devel >= 1.14.0
