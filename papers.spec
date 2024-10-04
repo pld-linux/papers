@@ -7,12 +7,12 @@
 Summary:	Document viewer for multiple document formats
 Summary(pl.UTF-8):	Przeglądarka dokumentów w wielu formatach
 Name:		papers
-Version:	46.2
+Version:	47.0
 Release:	1
 License:	GPL v2+
 Group:		X11/Applications/Graphics
-Source0:	https://download.gnome.org/sources/papers/46/%{name}-%{version}.tar.xz
-# Source0-md5:	101766ca55f1017d591bd273be7bc392
+Source0:	https://download.gnome.org/sources/papers/47/%{name}-%{version}.tar.xz
+# Source0-md5:	5eeddb6c1a9706416704a85d14b97239
 URL:		https://gitlab.gnome.org/GNOME/papers
 BuildRequires:	appstream-glib
 BuildRequires:	cairo-devel >= 1.14.0
@@ -25,8 +25,8 @@ BuildRequires:	gdk-pixbuf2-devel >= 2.40.0
 BuildRequires:	glib2-devel >= 1:2.75.0
 BuildRequires:	gobject-introspection-devel >= 1.0
 BuildRequires:	gsettings-desktop-schemas-devel
-BuildRequires:	gtk4-devel >= 4.13.8
-BuildRequires:	libadwaita-devel >= 1.5.0
+BuildRequires:	gtk4-devel >= 4.15.2
+BuildRequires:	libadwaita-devel >= 1.6
 BuildRequires:	libarchive-devel >= 3.6.0
 BuildRequires:	libgxps-devel >= 0.2.1
 BuildRequires:	libsecret-devel >= 0.5
@@ -36,8 +36,8 @@ BuildRequires:	libxml2-devel >= 1:2.6.31
 BuildRequires:	meson >= 0.59
 %{?with_nautilus:BuildRequires:	nautilus-devel >= 43}
 BuildRequires:	ninja >= 1.5
-#BuildRequires:	pango-devel >= 1:1.52.0
-BuildRequires:	poppler-glib-devel >= 22.05.0
+BuildRequires:	pango-devel >= 1:1.54.0
+BuildRequires:	poppler-glib-devel >= 23.07.0
 BuildRequires:	rpm-build >= 4.6
 BuildRequires:	rpmbuild(macros) >= 2.029
 BuildRequires:	rust >= 1.70
@@ -50,6 +50,7 @@ Requires(post,postun):	gtk-update-icon-cache
 Requires:	cairo >= 1.14.0
 Requires:	hicolor-icon-theme
 Requires:	libarchive >= 3.6.0
+Requires:	pango >= 1:1.54.0
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 # debugsource packages don't support rust (or require adding some flags to rust/cargo)
@@ -69,8 +70,8 @@ Summary(pl.UTF-8):	Biblioteki współdzielone Papers
 Group:		X11/Libraries
 Requires:	gdk-pixbuf2 >= 2.40.0
 Requires:	glib2 >= 1:2.75.0
-Requires:	gtk4 >= 4.13.8
-Requires:	libadwaita >= 1.5.0
+Requires:	gtk4 >= 4.15.2
+Requires:	libadwaita >= 1.6
 
 %description libs
 Papers shared libraries.
@@ -84,7 +85,7 @@ Summary(pl.UTF-8):	Pliki nagłówkowe Papers
 Group:		X11/Development/Libraries
 Requires:	%{name}-libs = %{version}-%{release}
 Requires:	glib2-devel >= 1:2.75.0
-Requires:	gtk4-devel >= 4.13.8
+Requires:	gtk4-devel >= 4.15.2
 
 %description devel
 Header files for Papers.
@@ -124,7 +125,7 @@ Group:		X11/Applications
 Requires:	%{name} = %{version}-%{release}
 Requires:	cairo >= 1.14.0
 Requires:	libxml2 >= 1:2.6.31
-Requires:	poppler-glib >= 22.05.0
+Requires:	poppler-glib >= 23.07.0
 
 %description backend-pdf
 View PDF documents with Papers.
@@ -177,7 +178,7 @@ To rozszerzenie pokazuje właściwości dokumentu Papers w Nautilusie.
 
 %build
 %meson build \
-	%{!?with_apidocs:-Dgtk_doc=false} \
+	%{!?with_apidocs:-Ddocumentation=false} \
 	%{!?with_nautilus:-Dnautilus=false} \
 	-Dps=enabled
 
