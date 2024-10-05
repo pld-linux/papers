@@ -19,6 +19,7 @@ Source0:	https://download.gnome.org/sources/papers/47/%{name}-%{version}.tar.xz
 # tar cJf ../packages/papers/papers-vendor-%{version}.tar.xz papers-%{version}/shell-rs/vendor
 Source1:	%{name}-vendor-%{version}.tar.xz
 # Source1-md5:	ff54d6120e209e48e426737331aee833
+Patch0:		%{name}-x32.patch
 URL:		https://gitlab.gnome.org/GNOME/papers
 BuildRequires:	appstream-glib
 BuildRequires:	cairo-devel >= 1.14.0
@@ -181,6 +182,9 @@ To rozszerzenie pokazuje właściwości dokumentu Papers w Nautilusie.
 
 %prep
 %setup -q -b1
+%ifarch x32
+%patch0 -p1
+%endif
 
 # use offline registry
 CARGO_HOME="$(pwd)/.cargo"
@@ -195,6 +199,9 @@ directory = '$PWD/shell-rs/vendor'
 EOF
 
 %build
+%ifarch x32
+export PKG_CONFIG_ALLOW_CROSS=1
+%endif
 %meson build \
 	%{!?with_apidocs:-Ddocumentation=false} \
 	%{!?with_nautilus:-Dnautilus=false} \
@@ -205,6 +212,9 @@ EOF
 %install
 rm -rf $RPM_BUILD_ROOT
 
+%ifarch x32
+export PKG_CONFIG_ALLOW_CROSS=1
+%endif
 %ninja_install -C build
 
 %if %{with apidocs}

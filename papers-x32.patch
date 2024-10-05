@@ -1,0 +1,19 @@
+--- papers-47.0/shell-rs/src/meson.build.orig	2024-09-14 23:47:13.000000000 +0200
++++ papers-47.0/shell-rs/src/meson.build	2024-10-05 12:48:42.470149342 +0200
+@@ -10,6 +10,7 @@ source_root = meson.current_source_dir()
+ cargo = find_program('cargo', required: true)
+ 
+ cargo_options = [ '--manifest-path', shell_rs_root / 'Cargo.toml' ]
++cargo_options += [ '--target', 'x86_64-unknown-linux-gnux32' ]
+ cargo_options += [ '--target-dir', meson.current_build_dir() ]
+ 
+ if get_option('profile') == 'devel'
+@@ -69,7 +70,7 @@ copy_binary = custom_target(
+   output: meson.project_name(),
+   command: [
+     'cp',
+-    meson.current_build_dir() / rust_target / meson.project_name(),
++    meson.current_build_dir() / 'x86_64-unknown-linux-gnux32' / rust_target / meson.project_name(),
+     '@OUTPUT@',
+   ],
+ )
