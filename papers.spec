@@ -13,6 +13,12 @@ License:	GPL v2+
 Group:		X11/Applications/Graphics
 Source0:	https://download.gnome.org/sources/papers/47/%{name}-%{version}.tar.xz
 # Source0-md5:	5eeddb6c1a9706416704a85d14b97239
+# cd papers-%{version}/shell-rs
+# cargo vendor-filterer --platform='*-unknown-linux-*' --tier=2 --feature with-keyring
+# cd ../..
+# tar cJf ../packages/papers/papers-vendor-%{version}.tar.xz papers-%{version}/shell-rs/vendor
+Source1:	%{name}-vendor-%{version}.tar.xz
+# Source1-md5:	ff54d6120e209e48e426737331aee833
 URL:		https://gitlab.gnome.org/GNOME/papers
 BuildRequires:	appstream-glib
 BuildRequires:	cairo-devel >= 1.14.0
@@ -174,7 +180,19 @@ This extension shows Papers document properties in Nautilus.
 To rozszerzenie pokazuje właściwości dokumentu Papers w Nautilusie.
 
 %prep
-%setup -q -n %{name}-%{version}
+%setup -q -b1
+
+# use offline registry
+CARGO_HOME="$(pwd)/.cargo"
+
+mkdir -p "$CARGO_HOME"
+cat >$CARGO_HOME/config <<EOF
+[source.crates-io]
+replace-with = 'vendored-sources'
+
+[source.vendored-sources]
+directory = '$PWD/shell-rs/vendor'
+EOF
 
 %build
 %meson build \
