@@ -7,18 +7,18 @@
 Summary:	Document viewer for multiple document formats
 Summary(pl.UTF-8):	Przeglądarka dokumentów w wielu formatach
 Name:		papers
-Version:	47.0
+Version:	47.3
 Release:	1
 License:	GPL v2+
 Group:		X11/Applications/Graphics
 Source0:	https://download.gnome.org/sources/papers/47/%{name}-%{version}.tar.xz
-# Source0-md5:	5eeddb6c1a9706416704a85d14b97239
+# Source0-md5:	935bd3bbca3e14865fa86f593fa77389
 # cd papers-%{version}/shell-rs
 # cargo vendor-filterer --platform='*-unknown-linux-*' --tier=2 --feature with-keyring
 # cd ../..
 # tar cJf ../packages/papers/papers-vendor-%{version}.tar.xz papers-%{version}/shell-rs/vendor
 Source1:	%{name}-vendor-%{version}.tar.xz
-# Source1-md5:	ff54d6120e209e48e426737331aee833
+# Source1-md5:	0915540ed0503120c5350a7f272d29d2
 Patch0:		%{name}-x32.patch
 URL:		https://gitlab.gnome.org/GNOME/papers
 BuildRequires:	appstream-glib
@@ -183,7 +183,7 @@ To rozszerzenie pokazuje właściwości dokumentu Papers w Nautilusie.
 %prep
 %setup -q -b1
 %ifarch x32
-%patch0 -p1
+%patch -P0 -p1
 %endif
 
 # use offline registry
@@ -202,12 +202,12 @@ EOF
 %ifarch x32
 export PKG_CONFIG_ALLOW_CROSS=1
 %endif
-%meson build \
+%meson \
 	%{!?with_apidocs:-Ddocumentation=false} \
 	%{!?with_nautilus:-Dnautilus=false} \
 	-Dps=enabled
 
-%ninja_build -C build
+%meson_build
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -215,7 +215,7 @@ rm -rf $RPM_BUILD_ROOT
 %ifarch x32
 export PKG_CONFIG_ALLOW_CROSS=1
 %endif
-%ninja_install -C build
+%meson_install
 
 %if %{with apidocs}
 install -d $RPM_BUILD_ROOT%{_gidocdir}
