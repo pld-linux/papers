@@ -60,8 +60,10 @@ Requires:	libarchive >= 3.6.0
 Requires:	pango >= 1:1.54.0
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
-# debugsource packages don't support rust (or require adding some flags to rust/cargo)
-%define		_debugsource_packages	0
+%ifarch %{ix86}
+# OOM when linking with debug info enabled
+%define		_enable_debug_packages	0
+%endif
 
 %description
 Papers is a document viewer for multiple document formats like pdf,
