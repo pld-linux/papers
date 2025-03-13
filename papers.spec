@@ -7,18 +7,18 @@
 Summary:	Document viewer for multiple document formats
 Summary(pl.UTF-8):	Przeglądarka dokumentów w wielu formatach
 Name:		papers
-Version:	47.3
+Version:	47.4
 Release:	1
 License:	GPL v2+
 Group:		X11/Applications/Graphics
 Source0:	https://download.gnome.org/sources/papers/47/%{name}-%{version}.tar.xz
-# Source0-md5:	935bd3bbca3e14865fa86f593fa77389
+# Source0-md5:	51a183b01ad864c7d75b701eb7e1446d
 # cd papers-%{version}/shell-rs
-# cargo vendor-filterer --platform='*-unknown-linux-*' --tier=2 --feature with-keyring
+# cargo vendor-filterer --platform='*-unknown-linux-*' --tier=2 --features with-keyring
 # cd ../..
 # tar cJf ../packages/papers/papers-vendor-%{version}.tar.xz papers-%{version}/shell-rs/vendor
 Source1:	%{name}-vendor-%{version}.tar.xz
-# Source1-md5:	0915540ed0503120c5350a7f272d29d2
+# Source1-md5:	9dfb2a8be46941dbbeeac82b784a08e6
 Patch0:		%{name}-x32.patch
 URL:		https://gitlab.gnome.org/GNOME/papers
 BuildRequires:	appstream-glib
