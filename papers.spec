@@ -21,7 +21,8 @@ Source1:	%{name}-vendor-%{version}.tar.xz
 # Source1-md5:	64a48649621865f0b87be8ace1dc047d
 Patch0:		%{name}-x32.patch
 URL:		https://gitlab.gnome.org/GNOME/papers
-BuildRequires:	appstream-glib
+# appstreamcli
+BuildRequires:	AppStream
 BuildRequires:	cairo-devel >= 1.14.0
 BuildRequires:	cargo
 BuildRequires:	dbus-devel

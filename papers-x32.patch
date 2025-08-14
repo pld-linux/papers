@@ -1,5 +1,5 @@
---- papers-47.0/shell-rs/src/meson.build.orig	2024-09-14 23:47:13.000000000 +0200
-+++ papers-47.0/shell-rs/src/meson.build	2024-10-05 12:48:42.470149342 +0200
+--- papers-48.5/shell/src/meson.build.orig	2025-07-20 09:36:03.000000000 +0200
++++ papers-48.5/shell/src/meson.build	2025-08-14 19:10:41.813471440 +0200
 @@ -10,6 +10,7 @@ source_root = meson.current_source_dir()
  cargo = find_program('cargo', required: true)
  
@@ -7,8 +7,8 @@
 +cargo_options += [ '--target', 'x86_64-unknown-linux-gnux32' ]
  cargo_options += [ '--target-dir', meson.current_build_dir() ]
  
- if get_option('profile') == 'devel'
-@@ -69,7 +70,7 @@ copy_binary = custom_target(
+ if get_option('optimization') == '0'
+@@ -75,7 +76,7 @@ custom_target(
    output: meson.project_name(),
    command: [
      'cp',
