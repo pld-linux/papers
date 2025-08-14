@@ -3,22 +3,22 @@
 # Conditional build:
 %bcond_without	apidocs		# gi-docgen based API documentation
 %bcond_without	nautilus	# Nautilus extension
+%bcond_without	sysprof		# sysprof profiling
 
 Summary:	Document viewer for multiple document formats
 Summary(pl.UTF-8):	Przeglądarka dokumentów w wielu formatach
 Name:		papers
-Version:	47.4
+Version:	48.5
 Release:	1
 License:	GPL v2+
 Group:		X11/Applications/Graphics
-Source0:	https://download.gnome.org/sources/papers/47/%{name}-%{version}.tar.xz
-# Source0-md5:	51a183b01ad864c7d75b701eb7e1446d
-# cd papers-%{version}/shell-rs
+Source0:	https://download.gnome.org/sources/papers/48/%{name}-%{version}.tar.xz
+# Source0-md5:	e395d2c5149bfb969599fb44d2e43870
+# cd papers-%{version}
 # cargo vendor-filterer --platform='*-unknown-linux-*' --tier=2 --features with-keyring
-# cd ../..
-# tar cJf ../packages/papers/papers-vendor-%{version}.tar.xz papers-%{version}/shell-rs/vendor
+# tar cJf ../../packages/papers/papers-vendor-%{version}.tar.xz vendor Cargo.lock
 Source1:	%{name}-vendor-%{version}.tar.xz
-# Source1-md5:	9dfb2a8be46941dbbeeac82b784a08e6
+# Source1-md5:	64a48649621865f0b87be8ace1dc047d
 Patch0:		%{name}-x32.patch
 URL:		https://gitlab.gnome.org/GNOME/papers
 BuildRequires:	appstream-glib
@@ -32,22 +32,23 @@ BuildRequires:	gdk-pixbuf2-devel >= 2.40.0
 BuildRequires:	glib2-devel >= 1:2.75.0
 BuildRequires:	gobject-introspection-devel >= 1.0
 BuildRequires:	gsettings-desktop-schemas-devel
-BuildRequires:	gtk4-devel >= 4.15.2
+BuildRequires:	gtk4-devel >= 4.17.1
 BuildRequires:	libadwaita-devel >= 1.6
 BuildRequires:	libarchive-devel >= 3.6.0
-BuildRequires:	libgxps-devel >= 0.2.1
 BuildRequires:	libsecret-devel >= 0.5
 BuildRequires:	libspectre-devel >= 0.2.0
+BuildRequires:	libspelling-devel >= 0.2
 BuildRequires:	libtiff-devel >= 4.0
 BuildRequires:	libxml2-devel >= 1:2.6.31
 BuildRequires:	meson >= 0.59
 %{?with_nautilus:BuildRequires:	nautilus-devel >= 43}
 BuildRequires:	ninja >= 1.5
 BuildRequires:	pango-devel >= 1:1.54.0
-BuildRequires:	poppler-glib-devel >= 23.07.0
+BuildRequires:	poppler-glib-devel >= 25.02.0
 BuildRequires:	rpm-build >= 4.6
 BuildRequires:	rpmbuild(macros) >= 2.029
-BuildRequires:	rust >= 1.70
+BuildRequires:	rust >= 1.75
+%{?with_sysprof:BuildRequires:	sysprof-devel >= 3.38}
 BuildRequires:	tar >= 1:1.22
 BuildRequires:	xz
 BuildRequires:	zlib-devel
@@ -58,6 +59,8 @@ Requires:	cairo >= 1.14.0
 Requires:	hicolor-icon-theme
 Requires:	libarchive >= 3.6.0
 Requires:	pango >= 1:1.54.0
+Obsoletes:	papers-backend-ps < 48
+Obsoletes:	papers-backend-xps < 48
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %ifarch %{ix86}
@@ -79,7 +82,7 @@ Summary(pl.UTF-8):	Biblioteki współdzielone Papers
 Group:		X11/Libraries
 Requires:	gdk-pixbuf2 >= 2.40.0
 Requires:	glib2 >= 1:2.75.0
-Requires:	gtk4 >= 4.15.2
+Requires:	gtk4 >= 4.17.1
 Requires:	libadwaita >= 1.6
 
 %description libs
@@ -94,7 +97,7 @@ Summary(pl.UTF-8):	Pliki nagłówkowe Papers
 Group:		X11/Development/Libraries
 Requires:	%{name}-libs = %{version}-%{release}
 Requires:	glib2-devel >= 1:2.75.0
-Requires:	gtk4-devel >= 4.15.2
+Requires:	gtk4-devel >= 4.17.1
 
 %description devel
 Header files for Papers.
@@ -134,39 +137,13 @@ Group:		X11/Applications
 Requires:	%{name} = %{version}-%{release}
 Requires:	cairo >= 1.14.0
 Requires:	libxml2 >= 1:2.6.31
-Requires:	poppler-glib >= 23.07.0
+Requires:	poppler-glib >= 25.02.0
 
 %description backend-pdf
 View PDF documents with Papers.
 
 %description backend-pdf -l pl.UTF-8
 Przeglądanie dokumentów PDF przy użyciu Papers.
-
-%package backend-ps
-Summary:	View PostScript documents with Papers
-Summary(pl.UTF-8):	Przeglądanie dokumentów PostScript przy użyciu Papers
-Group:		X11/Applications
-Requires:	%{name} = %{version}-%{release}
-Requires:	libspectre >= 0.2.0
-
-%description backend-ps
-View PostScript documents with Papers.
-
-%description backend-ps -l pl.UTF-8
-Przeglądanie dokumentów PostScript przy użyciu Papers.
-
-%package backend-xps
-Summary:	View XPS documents with Papers
-Summary(pl.UTF-8):	Przeglądanie dokumentów XPS przy użyciu Papers
-Group:		X11/Applications
-Requires:	%{name} = %{version}-%{release}
-Requires:	libgxps >= 0.2.1
-
-%description backend-xps
-View XPS documents with Papers.
-
-%description backend-xps -l pl.UTF-8
-Przeglądanie dokumentów XPS przy użyciu Papers.
 
 %package -n nautilus-extension-papers
 Summary:	Papers extension for Nautilus
@@ -183,7 +160,7 @@ This extension shows Papers document properties in Nautilus.
 To rozszerzenie pokazuje właściwości dokumentu Papers w Nautilusie.
 
 %prep
-%setup -q -b1
+%setup -q -a1
 %ifarch x32
 %patch -P0 -p1
 %endif
@@ -192,12 +169,12 @@ To rozszerzenie pokazuje właściwości dokumentu Papers w Nautilusie.
 CARGO_HOME="$(pwd)/.cargo"
 
 mkdir -p "$CARGO_HOME"
-cat >$CARGO_HOME/config <<EOF
+cat >$CARGO_HOME/config.toml <<EOF
 [source.crates-io]
 replace-with = 'vendored-sources'
 
 [source.vendored-sources]
-directory = '$PWD/shell-rs/vendor'
+directory = '$PWD/vendor'
 EOF
 
 %build
@@ -205,9 +182,15 @@ EOF
 export PKG_CONFIG_ALLOW_CROSS=1
 %endif
 %meson \
+	-Dcomics=enabled \
+	-Ddjvu=enabled \
 	%{!?with_apidocs:-Ddocumentation=false} \
+	-Dgtk_unix_print=enabled \
+	-Dintrospection=enabled \
 	%{!?with_nautilus:-Dnautilus=false} \
-	-Dps=enabled
+	-Dspell_check=enabled \
+	-Dsysprof=%{__enabled_disabled sysprof} \
+	-Dtiff=enabled
 
 %meson_build
 
@@ -272,8 +255,6 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libppsdocument-4.0.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libppsdocument-4.0.so.5
-%attr(755,root,root) %{_libdir}/libppsshell-4.0.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libppsshell-4.0.so.4
 %attr(755,root,root) %{_libdir}/libppsview-4.0.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libppsview-4.0.so.4
 %{_libdir}/girepository-1.0/PapersDocument-4.0.typelib
@@ -282,7 +263,6 @@ rm -rf $RPM_BUILD_ROOT
 %files devel
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libppsdocument-4.0.so
-%attr(755,root,root) %{_libdir}/libppsshell-4.0.so
 %attr(755,root,root) %{_libdir}/libppsview-4.0.so
 %{_includedir}/papers
 %{_datadir}/gir-1.0/PapersDocument-4.0.gir
@@ -308,18 +288,6 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/papers/5/backends/libpdfdocument.so
 %{_libdir}/papers/5/backends/pdfdocument.papers-backend
 %{_datadir}/metainfo/papers-pdfdocument.metainfo.xml
-
-%files backend-ps
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/papers/5/backends/libpsdocument.so
-%{_libdir}/papers/5/backends/psdocument.papers-backend
-%{_datadir}/metainfo/papers-psdocument.metainfo.xml
-
-%files backend-xps
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/papers/5/backends/libxpsdocument.so
-%{_libdir}/papers/5/backends/xpsdocument.papers-backend
-%{_datadir}/metainfo/papers-xpsdocument.metainfo.xml
 
 %if %{with nautilus}
 %files -n nautilus-extension-papers
