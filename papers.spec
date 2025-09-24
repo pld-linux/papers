@@ -9,7 +9,7 @@ Summary:	Document viewer for multiple document formats
 Summary(pl.UTF-8):	Przeglądarka dokumentów w wielu formatach
 Name:		papers
 Version:	48.5
-Release:	2
+Release:	3
 License:	GPL v2+
 Group:		X11/Applications/Graphics
 Source0:	https://download.gnome.org/sources/papers/48/%{name}-%{version}.tar.xz
