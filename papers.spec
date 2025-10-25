@@ -5,19 +5,22 @@
 %bcond_without	nautilus	# Nautilus extension
 %bcond_without	sysprof		# sysprof profiling
 
+# no changes since 48.5
+%define	crates_version	48.5
+
 Summary:	Document viewer for multiple document formats
 Summary(pl.UTF-8):	Przeglądarka dokumentów w wielu formatach
 Name:		papers
-Version:	48.5
-Release:	3
+Version:	48.6
+Release:	1
 License:	GPL v2+
 Group:		X11/Applications/Graphics
 Source0:	https://download.gnome.org/sources/papers/48/%{name}-%{version}.tar.xz
-# Source0-md5:	e395d2c5149bfb969599fb44d2e43870
+# Source0-md5:	e4b1a2ed78a6906393b5909c88d6e506
 # cd papers-%{version}
 # cargo vendor-filterer --platform='*-unknown-linux-*' --tier=2 --features with-keyring
 # tar cJf ../../packages/papers/papers-vendor-%{version}.tar.xz vendor Cargo.lock
-Source1:	%{name}-vendor-%{version}.tar.xz
+Source1:	%{name}-vendor-%{crates_version}.tar.xz
 # Source1-md5:	64a48649621865f0b87be8ace1dc047d
 Patch0:		%{name}-x32.patch
 URL:		https://gitlab.gnome.org/GNOME/papers
@@ -255,16 +258,16 @@ rm -rf $RPM_BUILD_ROOT
 %files libs
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libppsdocument-4.0.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libppsdocument-4.0.so.5
+%ghost %{_libdir}/libppsdocument-4.0.so.5
 %attr(755,root,root) %{_libdir}/libppsview-4.0.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libppsview-4.0.so.4
+%ghost %{_libdir}/libppsview-4.0.so.4
 %{_libdir}/girepository-1.0/PapersDocument-4.0.typelib
 %{_libdir}/girepository-1.0/PapersView-4.0.typelib
 
 %files devel
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libppsdocument-4.0.so
-%attr(755,root,root) %{_libdir}/libppsview-4.0.so
+%{_libdir}/libppsdocument-4.0.so
+%{_libdir}/libppsview-4.0.so
 %{_includedir}/papers
 %{_datadir}/gir-1.0/PapersDocument-4.0.gir
 %{_datadir}/gir-1.0/PapersView-4.0.gir
