@@ -5,27 +5,27 @@
 %bcond_without	nautilus	# Nautilus extension
 %bcond_without	sysprof		# sysprof profiling
 
-# no changes since 48.5
-%define	crates_version	48.5
+%define	crates_version	%{version}
 
 Summary:	Document viewer for multiple document formats
 Summary(pl.UTF-8):	Przeglądarka dokumentów w wielu formatach
 Name:		papers
-Version:	48.10
+Version:	50.3
 Release:	1
 License:	GPL v2+
 Group:		X11/Applications/Graphics
-Source0:	https://download.gnome.org/sources/papers/48/%{name}-%{version}.tar.xz
-# Source0-md5:	130be61116a6a500c7479ce89b61b39d
+Source0:	https://download.gnome.org/sources/papers/50/%{name}-%{version}.tar.xz
+# Source0-md5:	4ec18486fec7c1713346844c46940a18
 # cd papers-%{version}
 # cargo vendor-filterer --platform='*-unknown-linux-*' --tier=2 --features with-keyring
 # tar cJf ../../packages/papers/papers-vendor-%{version}.tar.xz vendor Cargo.lock
 Source1:	%{name}-vendor-%{crates_version}.tar.xz
-# Source1-md5:	64a48649621865f0b87be8ace1dc047d
+# Source1-md5:	b8bcb918ba880815f6c52ac6ed9d6876
 Patch0:		%{name}-x32.patch
 URL:		https://gitlab.gnome.org/GNOME/papers
 # appstreamcli
 BuildRequires:	AppStream
+BuildRequires:	blueprint-compiler >= 0.16
 BuildRequires:	cairo-devel >= 1.14.0
 BuildRequires:	cargo
 BuildRequires:	dbus-devel
@@ -37,21 +37,20 @@ BuildRequires:	glib2-devel >= 1:2.75.0
 BuildRequires:	gobject-introspection-devel >= 1.0
 BuildRequires:	gsettings-desktop-schemas-devel
 BuildRequires:	gtk4-devel >= 4.17.1
-BuildRequires:	libadwaita-devel >= 1.6
+BuildRequires:	libadwaita-devel >= 1.8
 BuildRequires:	libarchive-devel >= 3.6.0
-BuildRequires:	libsecret-devel >= 0.5
-BuildRequires:	libspectre-devel >= 0.2.0
 BuildRequires:	libspelling-devel >= 0.2
 BuildRequires:	libtiff-devel >= 4.0
 BuildRequires:	libxml2-devel >= 1:2.6.31
-BuildRequires:	meson >= 0.59
+BuildRequires:	meson >= 1.8.0
 %{?with_nautilus:BuildRequires:	nautilus-devel >= 43}
 BuildRequires:	ninja >= 1.5
 BuildRequires:	pango-devel >= 1:1.54.0
-BuildRequires:	poppler-glib-devel >= 25.02.0
+BuildRequires:	pkgconfig
+BuildRequires:	poppler-glib-devel >= 25.07.0
 BuildRequires:	rpm-build >= 4.6
 BuildRequires:	rpmbuild(macros) >= 2.029
-BuildRequires:	rust >= 1.75
+BuildRequires:	rust >= 1.85
 %{?with_sysprof:BuildRequires:	sysprof-devel >= 3.38}
 BuildRequires:	tar >= 1:1.22
 BuildRequires:	xz
@@ -87,7 +86,7 @@ Group:		X11/Libraries
 Requires:	gdk-pixbuf2 >= 2.40.0
 Requires:	glib2 >= 1:2.75.0
 Requires:	gtk4 >= 4.17.1
-Requires:	libadwaita >= 1.6
+Requires:	libadwaita >= 1.8
 
 %description libs
 Papers shared libraries.
@@ -102,6 +101,7 @@ Group:		X11/Development/Libraries
 Requires:	%{name}-libs = %{version}-%{release}
 Requires:	glib2-devel >= 1:2.75.0
 Requires:	gtk4-devel >= 4.17.1
+Requires:	libadwaita-devel >= 1.8
 
 %description devel
 Header files for Papers.
@@ -141,7 +141,7 @@ Group:		X11/Applications
 Requires:	%{name} = %{version}-%{release}
 Requires:	cairo >= 1.14.0
 Requires:	libxml2 >= 1:2.6.31
-Requires:	poppler-glib >= 25.02.0
+Requires:	poppler-glib >= 25.07.0
 
 %description backend-pdf
 View PDF documents with Papers.
@@ -231,21 +231,21 @@ rm -rf $RPM_BUILD_ROOT
 
 %files -f papers.lang
 %defattr(644,root,root,755)
-%doc NEWS README.md
+%doc NEWS.md README.md
 %attr(755,root,root) %{_bindir}/papers
 %attr(755,root,root) %{_bindir}/papers-previewer
 %attr(755,root,root) %{_bindir}/papers-thumbnailer
 %dir %{_libdir}/papers
-%dir %{_libdir}/papers/5
-%dir %{_libdir}/papers/5/backends
-%attr(755,root,root) %{_libdir}/papers/5/backends/libcomicsdocument.so
-%{_libdir}/papers/5/backends/comicsdocument.papers-backend
-%attr(755,root,root) %{_libdir}/papers/5/backends/libtiffdocument.so
-%{_libdir}/papers/5/backends/tiffdocument.papers-backend
+%dir %{_libdir}/papers/6
+%dir %{_libdir}/papers/6/backends
+%{_libdir}/papers/6/backends/libcomicsdocument.so
+%{_libdir}/papers/6/backends/org.gnome.Papers.ComicsDocument.papers-backend
+%{_libdir}/papers/6/backends/libtiffdocument.so
+%{_libdir}/papers/6/backends/org.gnome.Papers.TiffDocument.papers-backend
 %{_datadir}/glib-2.0/schemas/org.gnome.Papers.gschema.xml
 %{_datadir}/metainfo/org.gnome.Papers.metainfo.xml
-%{_datadir}/metainfo/papers-comicsdocument.metainfo.xml
-%{_datadir}/metainfo/papers-tiffdocument.metainfo.xml
+%{_datadir}/metainfo/org.gnome.Papers.ComicsDocument.metainfo.xml
+%{_datadir}/metainfo/org.gnome.Papers.TiffDocument.metainfo.xml
 %{_datadir}/thumbnailers/papers.thumbnailer
 %{_desktopdir}/org.gnome.Papers.desktop
 %{_desktopdir}/org.gnome.Papers-previewer.desktop
@@ -257,10 +257,10 @@ rm -rf $RPM_BUILD_ROOT
 
 %files libs
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libppsdocument-4.0.so.*.*.*
-%ghost %{_libdir}/libppsdocument-4.0.so.5
-%attr(755,root,root) %{_libdir}/libppsview-4.0.so.*.*.*
-%ghost %{_libdir}/libppsview-4.0.so.4
+%{_libdir}/libppsdocument-4.0.so.*.*.*
+%ghost %{_libdir}/libppsdocument-4.0.so.6
+%{_libdir}/libppsview-4.0.so.*.*.*
+%ghost %{_libdir}/libppsview-4.0.so.5
 %{_libdir}/girepository-1.0/PapersDocument-4.0.typelib
 %{_libdir}/girepository-1.0/PapersView-4.0.typelib
 
@@ -283,18 +283,18 @@ rm -rf $RPM_BUILD_ROOT
 
 %files backend-djvu
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/papers/5/backends/libdjvudocument.so
-%{_libdir}/papers/5/backends/djvudocument.papers-backend
-%{_datadir}/metainfo/papers-djvudocument.metainfo.xml
+%{_libdir}/papers/6/backends/libdjvudocument.so
+%{_libdir}/papers/6/backends/org.gnome.Papers.DjvuDocument.papers-backend
+%{_datadir}/metainfo/org.gnome.Papers.DjvuDocument.metainfo.xml
 
 %files backend-pdf
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/papers/5/backends/libpdfdocument.so
-%{_libdir}/papers/5/backends/pdfdocument.papers-backend
-%{_datadir}/metainfo/papers-pdfdocument.metainfo.xml
+%{_libdir}/papers/6/backends/libpdfdocument.so
+%{_libdir}/papers/6/backends/org.gnome.Papers.PdfDocument.papers-backend
+%{_datadir}/metainfo/org.gnome.Papers.PdfDocument.metainfo.xml
 
 %if %{with nautilus}
 %files -n nautilus-extension-papers
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/nautilus/extensions-4/libpapers-document-properties.so
+%{_libdir}/nautilus/extensions-4/libpapers-document-properties.so
 %endif
